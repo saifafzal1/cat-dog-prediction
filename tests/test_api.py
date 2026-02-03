@@ -51,6 +51,7 @@ def test_client_with_model():
     app_module.device = torch.device("cpu")
 
     from fastapi.testclient import TestClient
+
     client = TestClient(app_module.app)
 
     yield client
@@ -126,8 +127,7 @@ class TestPredictEndpoint:
         """Test that predict returns 503 when model is not loaded."""
         image_bytes = self.create_test_image("JPEG")
         response = test_client.post(
-            "/predict",
-            files={"file": ("test.jpg", image_bytes, "image/jpeg")}
+            "/predict", files={"file": ("test.jpg", image_bytes, "image/jpeg")}
         )
         # Model not loaded should return 503
         assert response.status_code == 503
@@ -135,16 +135,14 @@ class TestPredictEndpoint:
     def test_predict_rejects_non_image_file(self, test_client_with_model):
         """Test that predict rejects non-image files."""
         response = test_client_with_model.post(
-            "/predict",
-            files={"file": ("test.txt", b"not an image", "text/plain")}
+            "/predict", files={"file": ("test.txt", b"not an image", "text/plain")}
         )
         assert response.status_code == 400
 
     def test_predict_rejects_empty_file(self, test_client_with_model):
         """Test that predict rejects empty files."""
         response = test_client_with_model.post(
-            "/predict",
-            files={"file": ("test.jpg", b"", "image/jpeg")}
+            "/predict", files={"file": ("test.jpg", b"", "image/jpeg")}
         )
         assert response.status_code == 400
 
@@ -152,8 +150,7 @@ class TestPredictEndpoint:
         """Test that predict accepts JPEG images when model is loaded."""
         image_bytes = self.create_test_image("JPEG")
         response = test_client_with_model.post(
-            "/predict",
-            files={"file": ("test.jpg", image_bytes, "image/jpeg")}
+            "/predict", files={"file": ("test.jpg", image_bytes, "image/jpeg")}
         )
         assert response.status_code == 200
 
@@ -161,8 +158,7 @@ class TestPredictEndpoint:
         """Test that predict accepts PNG images when model is loaded."""
         image_bytes = self.create_test_image("PNG")
         response = test_client_with_model.post(
-            "/predict",
-            files={"file": ("test.png", image_bytes, "image/png")}
+            "/predict", files={"file": ("test.png", image_bytes, "image/png")}
         )
         assert response.status_code == 200
 
@@ -170,8 +166,7 @@ class TestPredictEndpoint:
         """Test that prediction response has correct format."""
         image_bytes = self.create_test_image("JPEG")
         response = test_client_with_model.post(
-            "/predict",
-            files={"file": ("test.jpg", image_bytes, "image/jpeg")}
+            "/predict", files={"file": ("test.jpg", image_bytes, "image/jpeg")}
         )
 
         assert response.status_code == 200
@@ -278,12 +273,7 @@ class TestLoadModelWeights:
         model = SimpleCNN(num_classes=2, dropout_rate=0.5)
         checkpoint = {
             "model_state_dict": model.state_dict(),
-            "config": {
-                "model": {
-                    "num_classes": 2,
-                    "dropout_rate": 0.5
-                }
-            }
+            "config": {"model": {"num_classes": 2, "dropout_rate": 0.5}},
         }
 
         model_path = tmp_path / "test_model.pt"
@@ -301,9 +291,7 @@ class TestLoadModelWeights:
 
         # Create checkpoint without config
         model = SimpleCNN(num_classes=2, dropout_rate=0.5)
-        checkpoint = {
-            "model_state_dict": model.state_dict()
-        }
+        checkpoint = {"model_state_dict": model.state_dict()}
 
         model_path = tmp_path / "test_model.pt"
         torch.save(checkpoint, model_path)

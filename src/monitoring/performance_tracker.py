@@ -31,7 +31,7 @@ class PredictionRecord:
         prediction: str,
         confidence: float,
         probabilities: Dict[str, float],
-        true_label: Optional[str] = None
+        true_label: Optional[str] = None,
     ):
         """
         Initialize a prediction record.
@@ -56,7 +56,7 @@ class PredictionRecord:
             "prediction": self.prediction,
             "confidence": self.confidence,
             "probabilities": self.probabilities,
-            "true_label": self.true_label
+            "true_label": self.true_label,
         }
 
 
@@ -93,7 +93,7 @@ class PerformanceTracker:
         prediction: str,
         confidence: float,
         probabilities: Dict[str, float],
-        true_label: Optional[str] = None
+        true_label: Optional[str] = None,
     ) -> None:
         """
         Record a new prediction.
@@ -109,7 +109,7 @@ class PerformanceTracker:
             prediction=prediction,
             confidence=confidence,
             probabilities=probabilities,
-            true_label=true_label
+            true_label=true_label,
         )
 
         with self._lock:
@@ -171,7 +171,7 @@ class PerformanceTracker:
                     "total_predictions": 0,
                     "labeled_predictions": 0,
                     "accuracy": None,
-                    "message": "No predictions recorded yet"
+                    "message": "No predictions recorded yet",
                 }
 
             records = list(self._records)
@@ -188,10 +188,7 @@ class PerformanceTracker:
             pred_counts[pred] = pred_counts.get(pred, 0) + 1
 
         prediction_distribution = {
-            pred: {
-                "count": count,
-                "percentage": round(count / total * 100, 2)
-            }
+            pred: {"count": count, "percentage": round(count / total * 100, 2)}
             for pred, count in pred_counts.items()
         }
 
@@ -200,7 +197,7 @@ class PerformanceTracker:
             "min": round(min(confidences), 4),
             "max": round(max(confidences), 4),
             "mean": round(np.mean(confidences), 4),
-            "std": round(np.std(confidences), 4)
+            "std": round(np.std(confidences), 4),
         }
 
         # Accuracy metrics (only if we have labeled data)
@@ -211,7 +208,7 @@ class PerformanceTracker:
                 "labeled_count": len(labeled),
                 "correct_count": correct,
                 "accuracy": round(correct / len(labeled), 4),
-                "error_rate": round(1 - (correct / len(labeled)), 4)
+                "error_rate": round(1 - (correct / len(labeled)), 4),
             }
 
             # Per-class metrics
@@ -222,7 +219,7 @@ class PerformanceTracker:
         timestamps = [r.timestamp for r in records]
         time_range = {
             "first_prediction": min(timestamps).isoformat(),
-            "last_prediction": max(timestamps).isoformat()
+            "last_prediction": max(timestamps).isoformat(),
         }
 
         return {
@@ -231,12 +228,11 @@ class PerformanceTracker:
             "prediction_distribution": prediction_distribution,
             "confidence_statistics": confidence_stats,
             "accuracy_metrics": accuracy_metrics,
-            "time_range": time_range
+            "time_range": time_range,
         }
 
     def _calculate_class_metrics(
-        self,
-        labeled_records: List[PredictionRecord]
+        self, labeled_records: List[PredictionRecord]
     ) -> Dict[str, Dict[str, float]]:
         """
         Calculate per-class precision, recall, and F1 score.
@@ -255,12 +251,9 @@ class PerformanceTracker:
         metrics = {}
         for cls in classes:
             # True positives, false positives, false negatives
-            tp = sum(1 for r in labeled_records
-                    if r.prediction == cls and r.true_label == cls)
-            fp = sum(1 for r in labeled_records
-                    if r.prediction == cls and r.true_label != cls)
-            fn = sum(1 for r in labeled_records
-                    if r.prediction != cls and r.true_label == cls)
+            tp = sum(1 for r in labeled_records if r.prediction == cls and r.true_label == cls)
+            fp = sum(1 for r in labeled_records if r.prediction == cls and r.true_label != cls)
+            fn = sum(1 for r in labeled_records if r.prediction != cls and r.true_label == cls)
 
             precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
             recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
@@ -270,7 +263,7 @@ class PerformanceTracker:
                 "precision": round(precision, 4),
                 "recall": round(recall, 4),
                 "f1_score": round(f1, 4),
-                "support": tp + fn
+                "support": tp + fn,
             }
 
         return metrics
@@ -327,7 +320,7 @@ class PerformanceTracker:
                     prediction=data["prediction"],
                     confidence=data["confidence"],
                     probabilities=data["probabilities"],
-                    true_label=data.get("true_label")
+                    true_label=data.get("true_label"),
                 )
                 self._records.append(record)
 
@@ -352,6 +345,5 @@ class PerformanceTracker:
 
 # Global performance tracker instance
 performance_tracker = PerformanceTracker(
-    max_records=10000,
-    storage_path=os.environ.get("PREDICTION_LOG_PATH", "logs/predictions.json")
+    max_records=10000, storage_path=os.environ.get("PREDICTION_LOG_PATH", "logs/predictions.json")
 )

@@ -168,12 +168,7 @@ class TestCreateModel:
 
     def test_create_model_custom_config(self):
         """Test model creation with custom config."""
-        config = {
-            "model": {
-                "num_classes": 5,
-                "dropout_rate": 0.3
-            }
-        }
+        config = {"model": {"num_classes": 5, "dropout_rate": 0.3}}
         model = create_model(config)
 
         assert model.num_classes == 5

@@ -42,10 +42,7 @@ def create_test_image(color: tuple = None) -> bytes:
 
 
 def simulate_predictions(
-    base_url: str,
-    num_requests: int,
-    delay: float = 0.5,
-    add_labels: bool = False
+    base_url: str, num_requests: int, delay: float = 0.5, add_labels: bool = False
 ) -> dict:
     """
     Simulate prediction requests to the API.
@@ -64,7 +61,7 @@ def simulate_predictions(
         "successful": 0,
         "failed": 0,
         "predictions": {"cat": 0, "dog": 0},
-        "latencies": []
+        "latencies": [],
     }
 
     print(f"Simulating {num_requests} prediction requests to {base_url}")
@@ -80,7 +77,7 @@ def simulate_predictions(
             response = requests.post(
                 f"{base_url}/predict",
                 files={"file": ("test.jpg", image_bytes, "image/jpeg")},
-                timeout=30
+                timeout=30,
             )
             latency = (time.time() - start_time) * 1000
 
@@ -93,8 +90,10 @@ def simulate_predictions(
                 stats["predictions"][prediction] += 1
                 stats["latencies"].append(latency)
 
-                print(f"[{i+1}/{num_requests}] Prediction: {prediction} "
-                      f"(confidence: {confidence:.4f}, latency: {latency:.2f}ms)")
+                print(
+                    f"[{i+1}/{num_requests}] Prediction: {prediction} "
+                    f"(confidence: {confidence:.4f}, latency: {latency:.2f}ms)"
+                )
 
                 # Optionally add true label (simulated)
                 if add_labels:
@@ -106,8 +105,7 @@ def simulate_predictions(
 
                     # Add label to the prediction
                     label_response = requests.post(
-                        f"{base_url}/predictions/-1/label",
-                        params={"true_label": true_label}
+                        f"{base_url}/predictions/-1/label", params={"true_label": true_label}
                     )
                     if label_response.status_code == 200:
                         print(f"         Added label: {true_label}")
@@ -152,6 +150,7 @@ def check_metrics(base_url: str) -> None:
         response = requests.get(f"{base_url}/metrics")
         if response.status_code == 200:
             import json
+
             print(json.dumps(response.json(), indent=2))
         else:
             print(f"Failed to fetch metrics: {response.status_code}")
@@ -174,6 +173,7 @@ def check_performance(base_url: str) -> None:
         response = requests.get(f"{base_url}/performance")
         if response.status_code == 200:
             import json
+
             print(json.dumps(response.json(), indent=2))
         else:
             print(f"Failed to fetch performance: {response.status_code}")
@@ -189,29 +189,27 @@ def main():
     parser.add_argument(
         "--url",
         default="http://localhost:8000",
-        help="API base URL (default: http://localhost:8000)"
+        help="API base URL (default: http://localhost:8000)",
     )
     parser.add_argument(
-        "-n", "--num-requests",
+        "-n",
+        "--num-requests",
         type=int,
         default=10,
-        help="Number of requests to simulate (default: 10)"
+        help="Number of requests to simulate (default: 10)",
     )
     parser.add_argument(
-        "-d", "--delay",
+        "-d",
+        "--delay",
         type=float,
         default=0.5,
-        help="Delay between requests in seconds (default: 0.5)"
+        help="Delay between requests in seconds (default: 0.5)",
     )
     parser.add_argument(
-        "--add-labels",
-        action="store_true",
-        help="Add simulated true labels to predictions"
+        "--add-labels", action="store_true", help="Add simulated true labels to predictions"
     )
     parser.add_argument(
-        "--metrics-only",
-        action="store_true",
-        help="Only display current metrics, do not simulate"
+        "--metrics-only", action="store_true", help="Only display current metrics, do not simulate"
     )
 
     args = parser.parse_args()
@@ -235,7 +233,7 @@ def main():
             base_url=args.url,
             num_requests=args.num_requests,
             delay=args.delay,
-            add_labels=args.add_labels
+            add_labels=args.add_labels,
         )
 
         # Display metrics after simulation

@@ -25,7 +25,7 @@ from sklearn.metrics import (
     accuracy_score,
     precision_score,
     recall_score,
-    f1_score
+    f1_score,
 )
 import mlflow
 import mlflow.pytorch
@@ -39,10 +39,7 @@ from src.data.dataloader import create_data_loaders, get_class_names
 from src.models.cnn import create_model, count_parameters
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -52,7 +49,7 @@ def train_one_epoch(
     criterion: nn.Module,
     optimizer: optim.Optimizer,
     device: torch.device,
-    epoch: int
+    epoch: int,
 ) -> Tuple[float, float]:
     """
     Train the model for one epoch.
@@ -98,10 +95,12 @@ def train_one_epoch(
         correct += (predicted == labels).sum().item()
 
         # Update progress bar
-        pbar.set_postfix({
-            "loss": f"{running_loss / (batch_idx + 1):.4f}",
-            "acc": f"{100 * correct / total:.2f}%"
-        })
+        pbar.set_postfix(
+            {
+                "loss": f"{running_loss / (batch_idx + 1):.4f}",
+                "acc": f"{100 * correct / total:.2f}%",
+            }
+        )
 
     avg_loss = running_loss / len(train_loader)
     accuracy = 100 * correct / total
@@ -114,7 +113,7 @@ def evaluate(
     data_loader: torch.utils.data.DataLoader,
     criterion: nn.Module,
     device: torch.device,
-    phase: str = "Val"
+    phase: str = "Val",
 ) -> Tuple[float, float, np.ndarray, np.ndarray]:
     """
     Evaluate the model on a dataset.
@@ -154,10 +153,12 @@ def evaluate(
             all_labels.extend(labels.cpu().numpy())
             all_preds.extend(predicted.cpu().numpy())
 
-            pbar.set_postfix({
-                "loss": f"{running_loss / len(data_loader):.4f}",
-                "acc": f"{100 * correct / total:.2f}%"
-            })
+            pbar.set_postfix(
+                {
+                    "loss": f"{running_loss / len(data_loader):.4f}",
+                    "acc": f"{100 * correct / total:.2f}%",
+                }
+            )
 
     avg_loss = running_loss / len(data_loader)
     accuracy = 100 * correct / total
@@ -166,10 +167,7 @@ def evaluate(
 
 
 def plot_confusion_matrix(
-    y_true: np.ndarray,
-    y_pred: np.ndarray,
-    class_names: list,
-    save_path: str
+    y_true: np.ndarray, y_pred: np.ndarray, class_names: list, save_path: str
 ) -> None:
     """
     Plot and save a confusion matrix.
@@ -193,7 +191,7 @@ def plot_confusion_matrix(
         yticklabels=class_names,
         title="Confusion Matrix",
         ylabel="True Label",
-        xlabel="Predicted Label"
+        xlabel="Predicted Label",
     )
 
     # Rotate tick labels
@@ -204,9 +202,12 @@ def plot_confusion_matrix(
     for i in range(cm.shape[0]):
         for j in range(cm.shape[1]):
             ax.text(
-                j, i, format(cm[i, j], "d"),
-                ha="center", va="center",
-                color="white" if cm[i, j] > thresh else "black"
+                j,
+                i,
+                format(cm[i, j], "d"),
+                ha="center",
+                va="center",
+                color="white" if cm[i, j] > thresh else "black",
             )
 
     fig.tight_layout()
@@ -217,11 +218,7 @@ def plot_confusion_matrix(
 
 
 def plot_training_curves(
-    train_losses: list,
-    val_losses: list,
-    train_accs: list,
-    val_accs: list,
-    save_path: str
+    train_losses: list, val_losses: list, train_accs: list, val_accs: list, save_path: str
 ) -> None:
     """
     Plot and save training and validation curves.
@@ -262,11 +259,7 @@ def plot_training_curves(
     logger.info(f"Training curves saved to {save_path}")
 
 
-def train(
-    config: Dict[str, Any],
-    data_dir: str,
-    output_dir: str
-) -> Dict[str, Any]:
+def train(config: Dict[str, Any], data_dir: str, output_dir: str) -> Dict[str, Any]:
     """
     Main training function with MLflow tracking.
 
@@ -316,7 +309,7 @@ def train(
     optimizer = optim.Adam(
         model.parameters(),
         lr=training_config.get("learning_rate", 0.001),
-        weight_decay=training_config.get("weight_decay", 0.0001)
+        weight_decay=training_config.get("weight_decay", 0.0001),
     )
 
     # Learning rate scheduler
@@ -324,7 +317,7 @@ def train(
     scheduler = StepLR(
         optimizer,
         step_size=scheduler_config.get("step_size", 5),
-        gamma=scheduler_config.get("gamma", 0.1)
+        gamma=scheduler_config.get("gamma", 0.1),
     )
 
     # Training parameters
@@ -333,18 +326,20 @@ def train(
     # Start MLflow run
     with mlflow.start_run():
         # Log parameters
-        mlflow.log_params({
-            "model_name": config.get("model", {}).get("name", "SimpleCNN"),
-            "num_classes": config.get("model", {}).get("num_classes", 2),
-            "dropout_rate": config.get("model", {}).get("dropout_rate", 0.5),
-            "batch_size": training_config.get("batch_size", 32),
-            "epochs": epochs,
-            "learning_rate": training_config.get("learning_rate", 0.001),
-            "weight_decay": training_config.get("weight_decay", 0.0001),
-            "optimizer": training_config.get("optimizer", "adam"),
-            "device": str(device),
-            "total_parameters": count_parameters(model)
-        })
+        mlflow.log_params(
+            {
+                "model_name": config.get("model", {}).get("name", "SimpleCNN"),
+                "num_classes": config.get("model", {}).get("num_classes", 2),
+                "dropout_rate": config.get("model", {}).get("dropout_rate", 0.5),
+                "batch_size": training_config.get("batch_size", 32),
+                "epochs": epochs,
+                "learning_rate": training_config.get("learning_rate", 0.001),
+                "weight_decay": training_config.get("weight_decay", 0.0001),
+                "optimizer": training_config.get("optimizer", "adam"),
+                "device": str(device),
+                "total_parameters": count_parameters(model),
+            }
+        )
 
         # Training history
         train_losses, val_losses = [], []
@@ -360,9 +355,7 @@ def train(
             )
 
             # Validate
-            val_loss, val_acc, _, _ = evaluate(
-                model, loaders["val"], criterion, device, "Val"
-            )
+            val_loss, val_acc, _, _ = evaluate(model, loaders["val"], criterion, device, "Val")
 
             # Update scheduler
             scheduler.step()
@@ -374,13 +367,16 @@ def train(
             val_accs.append(val_acc)
 
             # Log metrics to MLflow
-            mlflow.log_metrics({
-                "train_loss": train_loss,
-                "train_accuracy": train_acc,
-                "val_loss": val_loss,
-                "val_accuracy": val_acc,
-                "learning_rate": scheduler.get_last_lr()[0]
-            }, step=epoch)
+            mlflow.log_metrics(
+                {
+                    "train_loss": train_loss,
+                    "train_accuracy": train_acc,
+                    "val_loss": val_loss,
+                    "val_accuracy": val_acc,
+                    "learning_rate": scheduler.get_last_lr()[0],
+                },
+                step=epoch,
+            )
 
             # Log epoch summary
             logger.info(
@@ -393,13 +389,16 @@ def train(
             if val_acc > best_val_acc:
                 best_val_acc = val_acc
                 best_model_path = output_path / "best_model.pt"
-                torch.save({
-                    "epoch": epoch,
-                    "model_state_dict": model.state_dict(),
-                    "optimizer_state_dict": optimizer.state_dict(),
-                    "val_accuracy": val_acc,
-                    "config": config
-                }, best_model_path)
+                torch.save(
+                    {
+                        "epoch": epoch,
+                        "model_state_dict": model.state_dict(),
+                        "optimizer_state_dict": optimizer.state_dict(),
+                        "val_accuracy": val_acc,
+                        "config": config,
+                    },
+                    best_model_path,
+                )
                 logger.info(f"Best model saved with val_acc: {val_acc:.2f}%")
 
         # Final evaluation on test set
@@ -415,13 +414,15 @@ def train(
         f1 = f1_score(test_labels, test_preds, average="binary")
 
         # Log final test metrics
-        mlflow.log_metrics({
-            "test_loss": test_loss,
-            "test_accuracy": test_acc,
-            "test_precision": precision,
-            "test_recall": recall,
-            "test_f1": f1
-        })
+        mlflow.log_metrics(
+            {
+                "test_loss": test_loss,
+                "test_accuracy": test_acc,
+                "test_precision": precision,
+                "test_recall": recall,
+                "test_f1": f1,
+            }
+        )
 
         logger.info(
             f"Test Results - Loss: {test_loss:.4f}, Acc: {test_acc:.2f}%, "
@@ -436,30 +437,29 @@ def train(
 
         # Training curves
         curves_path = output_path / "training_curves.png"
-        plot_training_curves(
-            train_losses, val_losses, train_accs, val_accs, str(curves_path)
-        )
+        plot_training_curves(train_losses, val_losses, train_accs, val_accs, str(curves_path))
         mlflow.log_artifact(str(curves_path))
 
         # Save final model
         final_model_path = output_path / "final_model.pt"
-        torch.save({
-            "epoch": epochs - 1,
-            "model_state_dict": model.state_dict(),
-            "optimizer_state_dict": optimizer.state_dict(),
-            "val_accuracy": val_accs[-1],
-            "test_accuracy": test_acc,
-            "config": config
-        }, final_model_path)
+        torch.save(
+            {
+                "epoch": epochs - 1,
+                "model_state_dict": model.state_dict(),
+                "optimizer_state_dict": optimizer.state_dict(),
+                "val_accuracy": val_accs[-1],
+                "test_accuracy": test_acc,
+                "config": config,
+            },
+            final_model_path,
+        )
 
         # Log model to MLflow
         mlflow.pytorch.log_model(model, "model")
 
         # Save classification report
         report = classification_report(
-            test_labels, test_preds,
-            target_names=class_names,
-            output_dict=True
+            test_labels, test_preds, target_names=class_names, output_dict=True
         )
         report_path = output_path / "classification_report.json"
         with open(report_path, "w") as f:
@@ -476,7 +476,7 @@ def train(
             "test_recall": recall,
             "test_f1": f1,
             "model_path": str(final_model_path),
-            "best_model_path": str(output_path / "best_model.pt")
+            "best_model_path": str(output_path / "best_model.pt"),
         }
 
         return results

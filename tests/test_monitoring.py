@@ -147,9 +147,7 @@ class TestPerformanceTracker:
         tracker = PerformanceTracker(max_records=100)
 
         tracker.record_prediction(
-            prediction="cat",
-            confidence=0.95,
-            probabilities={"cat": 0.95, "dog": 0.05}
+            prediction="cat", confidence=0.95, probabilities={"cat": 0.95, "dog": 0.05}
         )
 
         metrics = tracker.get_performance_metrics()
@@ -165,7 +163,7 @@ class TestPerformanceTracker:
             prediction="cat",
             confidence=0.95,
             probabilities={"cat": 0.95, "dog": 0.05},
-            true_label="cat"
+            true_label="cat",
         )
 
         metrics = tracker.get_performance_metrics()
@@ -182,7 +180,9 @@ class TestPerformanceTracker:
         tracker.record_prediction("dog", 0.85, {"cat": 0.15, "dog": 0.85}, true_label="dog")
         tracker.record_prediction("cat", 0.8, {"cat": 0.8, "dog": 0.2}, true_label="cat")
         tracker.record_prediction("cat", 0.7, {"cat": 0.7, "dog": 0.3}, true_label="dog")  # Wrong
-        tracker.record_prediction("dog", 0.75, {"cat": 0.25, "dog": 0.75}, true_label="cat")  # Wrong
+        tracker.record_prediction(
+            "dog", 0.75, {"cat": 0.25, "dog": 0.75}, true_label="cat"
+        )  # Wrong
 
         metrics = tracker.get_performance_metrics()
 
@@ -209,7 +209,7 @@ class TestPerformanceTracker:
             tracker.record_prediction(
                 prediction="cat" if i % 2 == 0 else "dog",
                 confidence=0.9,
-                probabilities={"cat": 0.5, "dog": 0.5}
+                probabilities={"cat": 0.5, "dog": 0.5},
             )
 
         recent = tracker.get_recent_predictions(3)
@@ -266,7 +266,7 @@ class TestPredictionRecord:
             prediction="cat",
             confidence=0.95,
             probabilities={"cat": 0.95, "dog": 0.05},
-            true_label="cat"
+            true_label="cat",
         )
 
         data = record.to_dict()
@@ -282,7 +282,7 @@ class TestPredictionRecord:
             timestamp=datetime.utcnow(),
             prediction="dog",
             confidence=0.8,
-            probabilities={"cat": 0.2, "dog": 0.8}
+            probabilities={"cat": 0.2, "dog": 0.8},
         )
 
         data = record.to_dict()

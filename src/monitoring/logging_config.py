@@ -39,7 +39,7 @@ class JSONFormatter(logging.Formatter):
             "message": record.getMessage(),
             "module": record.module,
             "function": record.funcName,
-            "line": record.lineno
+            "line": record.lineno,
         }
 
         # Add exception info if present
@@ -81,9 +81,7 @@ class RequestLogFilter(logging.Filter):
 
 
 def setup_logging(
-    log_level: str = "INFO",
-    log_format: str = "standard",
-    log_file: Optional[str] = None
+    log_level: str = "INFO", log_format: str = "standard", log_file: Optional[str] = None
 ) -> None:
     """
     Configure logging for the application.
@@ -102,8 +100,7 @@ def setup_logging(
         formatter = JSONFormatter()
     else:
         formatter = logging.Formatter(
-            fmt="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-            datefmt="%Y-%m-%d %H:%M:%S"
+            fmt="%(asctime)s - %(name)s - %(levelname)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
         )
 
     # Configure root logger
@@ -170,7 +167,7 @@ class RequestLogger:
         path: str,
         client_ip: Optional[str] = None,
         request_id: Optional[str] = None,
-        extra: Optional[Dict[str, Any]] = None
+        extra: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Log an incoming request.
@@ -186,7 +183,7 @@ class RequestLogger:
             "event": "request_received",
             "method": method,
             "path": path,
-            "request_id": request_id
+            "request_id": request_id,
         }
 
         # Anonymize IP address (keep first two octets only)
@@ -207,7 +204,7 @@ class RequestLogger:
         status_code: int,
         latency_ms: float,
         request_id: Optional[str] = None,
-        extra: Optional[Dict[str, Any]] = None
+        extra: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Log a response.
@@ -226,7 +223,7 @@ class RequestLogger:
             "path": path,
             "status_code": status_code,
             "latency_ms": round(latency_ms, 2),
-            "request_id": request_id
+            "request_id": request_id,
         }
 
         if extra:
@@ -236,7 +233,7 @@ class RequestLogger:
         self.logger.log(
             log_level,
             f"Response: {method} {path} - {status_code} ({latency_ms:.2f}ms)",
-            extra={"extra_data": log_data}
+            extra={"extra_data": log_data},
         )
 
     def log_prediction(
@@ -244,7 +241,7 @@ class RequestLogger:
         prediction: str,
         confidence: float,
         latency_ms: float,
-        request_id: Optional[str] = None
+        request_id: Optional[str] = None,
     ) -> None:
         """
         Log a prediction result.
@@ -260,12 +257,12 @@ class RequestLogger:
             "prediction": prediction,
             "confidence": round(confidence, 4),
             "inference_time_ms": round(latency_ms, 2),
-            "request_id": request_id
+            "request_id": request_id,
         }
 
         self.logger.info(
             f"Prediction: {prediction} (confidence: {confidence:.4f})",
-            extra={"extra_data": log_data}
+            extra={"extra_data": log_data},
         )
 
 

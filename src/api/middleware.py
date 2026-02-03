@@ -58,7 +58,7 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
                 method=request.method,
                 path=request.url.path,
                 client_ip=client_ip,
-                request_id=request_id
+                request_id=request_id,
             )
 
         # Record start time
@@ -77,11 +77,7 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
         latency_ms = (time.time() - start_time) * 1000
 
         # Record metrics
-        record_request(
-            endpoint=request.url.path,
-            latency_ms=latency_ms,
-            success=success
-        )
+        record_request(endpoint=request.url.path, latency_ms=latency_ms, success=success)
 
         # Log response
         if should_log:
@@ -90,7 +86,7 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
                 path=request.url.path,
                 status_code=response.status_code,
                 latency_ms=latency_ms,
-                request_id=request_id
+                request_id=request_id,
             )
 
         # Add request ID to response headers

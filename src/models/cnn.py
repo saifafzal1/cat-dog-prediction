@@ -24,11 +24,7 @@ class SimpleCNN(nn.Module):
     Input images are expected to be 224x224 RGB images.
     """
 
-    def __init__(
-        self,
-        num_classes: int = 2,
-        dropout_rate: float = 0.5
-    ):
+    def __init__(self, num_classes: int = 2, dropout_rate: float = 0.5):
         """
         Initialize the SimpleCNN model.
 
@@ -43,48 +39,26 @@ class SimpleCNN(nn.Module):
 
         # First convolutional block
         # Input: 3 x 224 x 224, Output: 32 x 112 x 112
-        self.conv1 = nn.Conv2d(
-            in_channels=3,
-            out_channels=32,
-            kernel_size=3,
-            stride=1,
-            padding=1
-        )
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=32, kernel_size=3, stride=1, padding=1)
         self.bn1 = nn.BatchNorm2d(32)
         self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
 
         # Second convolutional block
         # Input: 32 x 112 x 112, Output: 64 x 56 x 56
-        self.conv2 = nn.Conv2d(
-            in_channels=32,
-            out_channels=64,
-            kernel_size=3,
-            stride=1,
-            padding=1
-        )
+        self.conv2 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, stride=1, padding=1)
         self.bn2 = nn.BatchNorm2d(64)
         self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
 
         # Third convolutional block
         # Input: 64 x 56 x 56, Output: 128 x 28 x 28
-        self.conv3 = nn.Conv2d(
-            in_channels=64,
-            out_channels=128,
-            kernel_size=3,
-            stride=1,
-            padding=1
-        )
+        self.conv3 = nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, stride=1, padding=1)
         self.bn3 = nn.BatchNorm2d(128)
         self.pool3 = nn.MaxPool2d(kernel_size=2, stride=2)
 
         # Fourth convolutional block
         # Input: 128 x 28 x 28, Output: 256 x 14 x 14
         self.conv4 = nn.Conv2d(
-            in_channels=128,
-            out_channels=256,
-            kernel_size=3,
-            stride=1,
-            padding=1
+            in_channels=128, out_channels=256, kernel_size=3, stride=1, padding=1
         )
         self.bn4 = nn.BatchNorm2d(256)
         self.pool4 = nn.MaxPool2d(kernel_size=2, stride=2)
@@ -185,7 +159,7 @@ def create_model(config: Dict[str, Any]) -> SimpleCNN:
 
     model = SimpleCNN(
         num_classes=model_config.get("num_classes", 2),
-        dropout_rate=model_config.get("dropout_rate", 0.5)
+        dropout_rate=model_config.get("dropout_rate", 0.5),
     )
 
     return model

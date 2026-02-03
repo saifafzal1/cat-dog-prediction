@@ -105,7 +105,7 @@ class MetricsCollector:
                 for pred, count in self._predictions.items():
                     prediction_distribution[pred] = {
                         "count": count,
-                        "percentage": round(count / self._total_predictions * 100, 2)
+                        "percentage": round(count / self._total_predictions * 100, 2),
                     }
 
             # Calculate average confidence
@@ -126,14 +126,14 @@ class MetricsCollector:
                     "total": self._total_requests,
                     "by_endpoint": dict(self._requests_by_endpoint),
                     "errors": dict(self._errors_by_endpoint),
-                    "error_rate_percent": round(error_rate, 2)
+                    "error_rate_percent": round(error_rate, 2),
                 },
                 "latency_ms": latency_stats,
                 "predictions": {
                     "total": self._total_predictions,
                     "distribution": prediction_distribution,
-                    "average_confidence": round(avg_confidence, 4)
-                }
+                    "average_confidence": round(avg_confidence, 4),
+                },
             }
 
     def _calculate_latency_stats(self) -> Dict[str, float]:
@@ -144,14 +144,7 @@ class MetricsCollector:
             Dictionary with min, max, avg, and p95 latency
         """
         if not self._latencies:
-            return {
-                "min": 0.0,
-                "max": 0.0,
-                "avg": 0.0,
-                "p50": 0.0,
-                "p95": 0.0,
-                "p99": 0.0
-            }
+            return {"min": 0.0, "max": 0.0, "avg": 0.0, "p50": 0.0, "p95": 0.0, "p99": 0.0}
 
         sorted_latencies = sorted(self._latencies)
         n = len(sorted_latencies)
@@ -162,7 +155,7 @@ class MetricsCollector:
             "avg": round(sum(sorted_latencies) / n, 2),
             "p50": round(sorted_latencies[int(n * 0.50)], 2),
             "p95": round(sorted_latencies[int(n * 0.95)], 2),
-            "p99": round(sorted_latencies[int(n * 0.99)], 2)
+            "p99": round(sorted_latencies[int(n * 0.99)], 2),
         }
 
     def reset(self) -> None:

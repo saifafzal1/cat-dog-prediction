@@ -36,7 +36,7 @@ from src.monitoring.performance_tracker import performance_tracker
 setup_logging(
     log_level=os.environ.get("LOG_LEVEL", "INFO"),
     log_format="standard",
-    log_file=os.environ.get("LOG_FILE", "logs/api.log")
+    log_file=os.environ.get("LOG_FILE", "logs/api.log"),
 )
 logger = logging.getLogger(__name__)
 
@@ -53,6 +53,7 @@ CLASS_NAMES = {0: "cat", 1: "dog"}
 
 class HealthResponse(BaseModel):
     """Response model for health check endpoint."""
+
     status: str = Field(..., description="Service status")
     model_loaded: bool = Field(..., description="Whether model is loaded")
     device: str = Field(..., description="Compute device being used")
@@ -61,16 +62,16 @@ class HealthResponse(BaseModel):
 
 class PredictionResponse(BaseModel):
     """Response model for prediction endpoint."""
+
     prediction: str = Field(..., description="Predicted class label")
     confidence: float = Field(..., description="Confidence score for prediction")
-    probabilities: Dict[str, float] = Field(
-        ..., description="Probability for each class"
-    )
+    probabilities: Dict[str, float] = Field(..., description="Probability for each class")
     inference_time_ms: float = Field(..., description="Inference time in milliseconds")
 
 
 class ErrorResponse(BaseModel):
     """Response model for error cases."""
+
     error: str = Field(..., description="Error message")
     detail: Optional[str] = Field(None, description="Detailed error information")
 
@@ -225,7 +226,7 @@ app = FastAPI(
     title="Cats vs Dogs Classifier API",
     description="REST API for binary image classification (Cats vs Dogs)",
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
 
@@ -233,7 +234,7 @@ app = FastAPI(
     "/health",
     response_model=HealthResponse,
     summary="Health Check",
-    description="Check the health status of the inference service"
+    description="Check the health status of the inference service",
 )
 async def health_check() -> HealthResponse:
     """
@@ -246,15 +247,11 @@ async def health_check() -> HealthResponse:
         status="healthy",
         model_loaded=model is not None,
         device=str(device) if device else "unknown",
-        version="1.0.0"
+        version="1.0.0",
     )
 
 
-@app.get(
-    "/",
-    summary="Root Endpoint",
-    description="Welcome message and API information"
-)
+@app.get("/", summary="Root Endpoint", description="Welcome message and API information")
 async def root() -> Dict[str, Any]:
     """
     Root endpoint providing API information.
@@ -262,10 +259,7 @@ async def root() -> Dict[str, Any]:
     return {
         "message": "Cats vs Dogs Classification API",
         "version": "1.0.0",
-        "endpoints": {
-            "health": "/health",
-            "predict": "/predict"
-        }
+        "endpoints": {"health": "/health", "predict": "/predict"},
     }
 
 
@@ -275,10 +269,10 @@ async def root() -> Dict[str, Any]:
     responses={
         400: {"model": ErrorResponse, "description": "Invalid input"},
         500: {"model": ErrorResponse, "description": "Internal server error"},
-        503: {"model": ErrorResponse, "description": "Model not loaded"}
+        503: {"model": ErrorResponse, "description": "Model not loaded"},
     },
     summary="Predict Image Class",
-    description="Upload an image to get cat/dog classification prediction"
+    description="Upload an image to get cat/dog classification prediction",
 )
 async def predict(
     file: UploadFile = File(..., description="Image file (JPEG, PNG)")
@@ -302,15 +296,14 @@ async def predict(
     if model is None:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Model not loaded. Please ensure model file exists."
+            detail="Model not loaded. Please ensure model file exists.",
         )
 
     # Validate file type
     if file.content_type not in ["image/jpeg", "image/png", "image/jpg"]:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Invalid file type: {file.content_type}. "
-                   "Supported types: JPEG, PNG"
+            detail=f"Invalid file type: {file.content_type}. " "Supported types: JPEG, PNG",
         )
 
     try:
@@ -319,8 +312,7 @@ async def predict(
 
         if len(image_bytes) == 0:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Empty file uploaded"
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Empty file uploaded"
             )
 
         # Preprocess image
@@ -342,16 +334,13 @@ async def predict(
         confidence = float(probs[predicted_class])
 
         # Build probability dictionary
-        prob_dict = {
-            CLASS_NAMES[i]: float(probs[i])
-            for i in range(len(CLASS_NAMES))
-        }
+        prob_dict = {CLASS_NAMES[i]: float(probs[i]) for i in range(len(CLASS_NAMES))}
 
         # Log prediction
         request_logger.log_prediction(
             prediction=CLASS_NAMES[predicted_class],
             confidence=confidence,
-            latency_ms=inference_time
+            latency_ms=inference_time,
         )
 
         # Record metrics
@@ -359,9 +348,7 @@ async def predict(
 
         # Track for performance monitoring
         performance_tracker.record_prediction(
-            prediction=CLASS_NAMES[predicted_class],
-            confidence=confidence,
-            probabilities=prob_dict
+            prediction=CLASS_NAMES[predicted_class], confidence=confidence, probabilities=prob_dict
         )
 
         logger.info(
@@ -373,38 +360,29 @@ async def predict(
             prediction=CLASS_NAMES[predicted_class],
             confidence=confidence,
             probabilities=prob_dict,
-            inference_time_ms=round(inference_time, 2)
+            inference_time_ms=round(inference_time, 2),
         )
 
     except HTTPException:
         raise
     except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except Exception as e:
         logger.error(f"Prediction failed: {e}")
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Prediction failed: {str(e)}"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Prediction failed: {str(e)}"
         )
 
 
 @app.get(
-    "/model/info",
-    summary="Model Information",
-    description="Get information about the loaded model"
+    "/model/info", summary="Model Information", description="Get information about the loaded model"
 )
 async def model_info() -> Dict[str, Any]:
     """
     Get information about the currently loaded model.
     """
     if model is None:
-        return {
-            "loaded": False,
-            "message": "No model loaded"
-        }
+        return {"loaded": False, "message": "No model loaded"}
 
     # Count parameters
     total_params = sum(p.numel() for p in model.parameters())
@@ -419,14 +397,14 @@ async def model_info() -> Dict[str, Any]:
         "trainable_parameters": trainable_params,
         "device": str(device),
         "input_shape": [1, 3, 224, 224],
-        "class_labels": CLASS_NAMES
+        "class_labels": CLASS_NAMES,
     }
 
 
 @app.get(
     "/metrics",
     summary="Service Metrics",
-    description="Get service performance metrics including request counts and latencies"
+    description="Get service performance metrics including request counts and latencies",
 )
 async def metrics() -> Dict[str, Any]:
     """
@@ -440,7 +418,7 @@ async def metrics() -> Dict[str, Any]:
 @app.get(
     "/performance",
     summary="Model Performance",
-    description="Get model performance metrics including accuracy and prediction distribution"
+    description="Get model performance metrics including accuracy and prediction distribution",
 )
 async def performance() -> Dict[str, Any]:
     """
@@ -455,7 +433,7 @@ async def performance() -> Dict[str, Any]:
 @app.get(
     "/predictions/recent",
     summary="Recent Predictions",
-    description="Get the most recent prediction records"
+    description="Get the most recent prediction records",
 )
 async def recent_predictions(
     n: int = Query(default=10, ge=1, le=100, description="Number of predictions to return")
@@ -475,11 +453,10 @@ async def recent_predictions(
 @app.post(
     "/predictions/{index}/label",
     summary="Add True Label",
-    description="Add a true label to a prediction for accuracy tracking"
+    description="Add a true label to a prediction for accuracy tracking",
 )
 async def add_label(
-    index: int,
-    true_label: str = Query(..., description="True label (cat or dog)")
+    index: int, true_label: str = Query(..., description="True label (cat or dog)")
 ) -> Dict[str, str]:
     """
     Add a true label to a prediction record.
@@ -495,8 +472,7 @@ async def add_label(
     """
     if true_label not in ["cat", "dog"]:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Label must be 'cat' or 'dog'"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Label must be 'cat' or 'dog'"
         )
 
     success = performance_tracker.add_true_label(index, true_label)
@@ -505,16 +481,11 @@ async def add_label(
         return {"message": f"Label '{true_label}' added to prediction at index {index}"}
     else:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Prediction at index {index} not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"Prediction at index {index} not found"
         )
 
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(
-        "src.api.app:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True
-    )
+
+    uvicorn.run("src.api.app:app", host="0.0.0.0", port=8000, reload=True)

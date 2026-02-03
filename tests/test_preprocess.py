@@ -17,11 +17,7 @@ import numpy as np
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.data.preprocess import (
-    validate_image,
-    resize_image,
-    split_dataset
-)
+from src.data.preprocess import validate_image, resize_image, split_dataset
 
 
 class TestValidateImage:
@@ -152,11 +148,7 @@ class TestSplitDataset:
         paths = [f"image_{i}.jpg" for i in range(100)]
 
         train, val, test = split_dataset(
-            paths,
-            train_ratio=0.8,
-            val_ratio=0.1,
-            test_ratio=0.1,
-            random_seed=42
+            paths, train_ratio=0.8, val_ratio=0.1, test_ratio=0.1, random_seed=42
         )
 
         assert len(train) == 80
@@ -213,12 +205,7 @@ class TestSplitDataset:
         paths = [f"image_{i}.jpg" for i in range(100)]
 
         with pytest.raises(ValueError):
-            split_dataset(
-                paths,
-                train_ratio=0.8,
-                val_ratio=0.2,
-                test_ratio=0.2  # Sum > 1.0
-            )
+            split_dataset(paths, train_ratio=0.8, val_ratio=0.2, test_ratio=0.2)  # Sum > 1.0
 
     def test_split_empty_list(self):
         """Test splitting an empty list."""
@@ -233,11 +220,7 @@ class TestSplitDataset:
         paths = ["image_0.jpg", "image_1.jpg", "image_2.jpg"]
 
         train, val, test = split_dataset(
-            paths,
-            train_ratio=0.6,
-            val_ratio=0.2,
-            test_ratio=0.2,
-            random_seed=42
+            paths, train_ratio=0.6, val_ratio=0.2, test_ratio=0.2, random_seed=42
         )
 
         # All paths should be distributed
