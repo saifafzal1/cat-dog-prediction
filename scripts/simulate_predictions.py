@@ -7,7 +7,6 @@ metrics and test the monitoring endpoints.
 """
 
 import argparse
-import os
 import random
 import sys
 import time

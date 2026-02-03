@@ -6,7 +6,6 @@ logging, and performance tracking functionality.
 """
 
 import sys
-import time
 from datetime import datetime
 from pathlib import Path
 
@@ -16,8 +15,8 @@ import pytest
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.monitoring.metrics import MetricsCollector
-from src.monitoring.performance_tracker import PerformanceTracker, PredictionRecord
+from src.monitoring.metrics import MetricsCollector  # noqa: E402
+from src.monitoring.performance_tracker import PerformanceTracker, PredictionRecord  # noqa: E402
 
 
 class TestMetricsCollector:

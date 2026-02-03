@@ -7,10 +7,9 @@ including logging of parameters, metrics, and artifacts.
 
 import json
 import logging
-import os
 import sys
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Tuple
 
 import matplotlib.pyplot as plt
 import mlflow
@@ -20,7 +19,6 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from sklearn.metrics import (
-    accuracy_score,
     classification_report,
     confusion_matrix,
     f1_score,
@@ -34,9 +32,9 @@ from tqdm import tqdm
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.data.dataloader import create_data_loaders, get_class_names
-from src.models.cnn import count_parameters, create_model
-from src.utils.config import get_mlflow_config, get_training_config, load_config
+from src.data.dataloader import create_data_loaders, get_class_names  # noqa: E402
+from src.models.cnn import count_parameters, create_model  # noqa: E402
+from src.utils.config import get_mlflow_config, get_training_config, load_config  # noqa: E402
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")

@@ -5,7 +5,6 @@ This module provides functions to load and validate configuration
 from YAML files for the MLOps pipeline.
 """
 
-import os
 from pathlib import Path
 from typing import Any, Dict, Optional
 

@@ -5,12 +5,9 @@ These tests verify the correctness of image validation, resizing,
 and dataset splitting functions.
 """
 
-import os
 import sys
-import tempfile
 from pathlib import Path
 
-import numpy as np
 import pytest
 from PIL import Image
 
@@ -18,7 +15,7 @@ from PIL import Image
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.data.preprocess import resize_image, split_dataset, validate_image
+from src.data.preprocess import resize_image, split_dataset, validate_image  # noqa: E402
 
 
 class TestValidateImage:

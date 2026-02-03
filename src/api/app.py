@@ -17,7 +17,6 @@ from typing import Any, Dict, List, Optional
 import numpy as np
 import torch
 from fastapi import FastAPI, File, HTTPException, Query, UploadFile, status
-from fastapi.responses import JSONResponse
 from PIL import Image
 from pydantic import BaseModel, Field
 
@@ -25,12 +24,12 @@ from pydantic import BaseModel, Field
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.data.dataloader import get_eval_transforms
-from src.models.cnn import SimpleCNN
-from src.monitoring.logging_config import request_logger, setup_logging
-from src.monitoring.metrics import get_metrics, record_prediction
-from src.monitoring.performance_tracker import performance_tracker
-from src.utils.config import load_config
+from src.data.dataloader import get_eval_transforms  # noqa: E402
+from src.models.cnn import SimpleCNN  # noqa: E402
+from src.monitoring.logging_config import request_logger, setup_logging  # noqa: E402
+from src.monitoring.metrics import get_metrics, record_prediction  # noqa: E402
+from src.monitoring.performance_tracker import performance_tracker  # noqa: E402
+from src.utils.config import load_config  # noqa: E402
 
 # Set up logging
 setup_logging(

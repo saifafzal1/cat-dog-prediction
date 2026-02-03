@@ -16,7 +16,7 @@ import torch.nn as nn
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.models.cnn import SimpleCNN, count_parameters, create_model
+from src.models.cnn import SimpleCNN, count_parameters, create_model  # noqa: E402
 
 
 class TestSimpleCNN:

@@ -5,13 +5,11 @@ This module provides functionality to track and expose metrics
 such as request count, latency, and prediction statistics.
 """
 
-import json
 import logging
 import threading
-import time
 from collections import defaultdict
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 # Configure logging
 logger = logging.getLogger(__name__)

@@ -119,7 +119,7 @@ class MetricsMiddleware(BaseHTTPMiddleware):
 
         response = await call_next(request)
 
-        latency_ms = (time.time() - start_time) * 1000
+        _latency_ms = (time.time() - start_time) * 1000  # noqa: F841
 
         # Record metrics (already done in logging middleware, but can add more here)
         # This is a placeholder for additional metrics collection
