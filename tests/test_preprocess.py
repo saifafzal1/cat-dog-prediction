@@ -9,15 +9,16 @@ import os
 import sys
 import tempfile
 from pathlib import Path
+
+import numpy as np
 import pytest
 from PIL import Image
-import numpy as np
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.data.preprocess import validate_image, resize_image, split_dataset
+from src.data.preprocess import resize_image, split_dataset, validate_image
 
 
 class TestValidateImage:

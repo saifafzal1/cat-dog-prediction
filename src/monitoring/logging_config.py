@@ -5,13 +5,13 @@ This module provides structured logging configuration with support
 for different log levels, formats, and output destinations.
 """
 
-import os
-import sys
 import json
 import logging
+import os
+import sys
 from datetime import datetime
-from typing import Dict, Any, Optional
 from pathlib import Path
+from typing import Any, Dict, Optional
 
 
 class JSONFormatter(logging.Formatter):

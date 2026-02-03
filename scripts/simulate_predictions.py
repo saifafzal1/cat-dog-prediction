@@ -6,14 +6,15 @@ This script sends simulated requests to the API to generate
 metrics and test the monitoring endpoints.
 """
 
+import argparse
 import os
+import random
 import sys
 import time
-import random
-import argparse
-import requests
-from pathlib import Path
 from io import BytesIO
+from pathlib import Path
+
+import requests
 from PIL import Image
 
 # Add project root to path

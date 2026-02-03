@@ -5,32 +5,32 @@ This module provides a REST API for serving predictions from the
 trained model. It includes health check, prediction, and monitoring endpoints.
 """
 
+import io
+import logging
 import os
 import sys
-import io
 import time
-import logging
-from pathlib import Path
-from typing import Dict, Any, Optional, List
 from contextlib import asynccontextmanager
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
-import torch
-from PIL import Image
-from fastapi import FastAPI, File, UploadFile, HTTPException, status, Query
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field
 import numpy as np
+import torch
+from fastapi import FastAPI, File, HTTPException, Query, UploadFile, status
+from fastapi.responses import JSONResponse
+from PIL import Image
+from pydantic import BaseModel, Field
 
 # Add project root to path for imports
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.models.cnn import SimpleCNN
 from src.data.dataloader import get_eval_transforms
-from src.utils.config import load_config
+from src.models.cnn import SimpleCNN
+from src.monitoring.logging_config import request_logger, setup_logging
 from src.monitoring.metrics import get_metrics, record_prediction
-from src.monitoring.logging_config import setup_logging, request_logger
 from src.monitoring.performance_tracker import performance_tracker
+from src.utils.config import load_config
 
 # Set up logging
 setup_logging(

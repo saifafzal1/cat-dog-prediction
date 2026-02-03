@@ -5,14 +5,14 @@ This module tracks model predictions and allows comparison with
 true labels to detect model drift and performance degradation.
 """
 
-import os
 import json
+import logging
+import os
 import threading
+from collections import deque
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Any, Optional, List, Tuple
-from collections import deque
-import logging
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 

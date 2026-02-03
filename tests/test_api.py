@@ -5,15 +5,16 @@ These tests verify the API endpoints function correctly,
 including health checks and prediction handling.
 """
 
-import sys
 import io
 import os
+import sys
 from pathlib import Path
-from unittest.mock import patch, MagicMock
-import pytest
-from PIL import Image
+from unittest.mock import MagicMock, patch
+
 import numpy as np
+import pytest
 import torch
+from PIL import Image
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
@@ -29,6 +30,7 @@ def test_client():
 
     # Import and create test client
     from fastapi.testclient import TestClient
+
     from src.api.app import app
 
     client = TestClient(app)
@@ -38,8 +40,8 @@ def test_client():
 @pytest.fixture
 def test_client_with_model():
     """Create a test client with a mock model loaded."""
-    from src.models.cnn import SimpleCNN
     import src.api.app as app_module
+    from src.models.cnn import SimpleCNN
 
     # Create a real model for testing
     mock_model = SimpleCNN(num_classes=2, dropout_rate=0.5)

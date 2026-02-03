@@ -5,38 +5,38 @@ This script handles model training with MLflow experiment tracking,
 including logging of parameters, metrics, and artifacts.
 """
 
+import json
+import logging
 import os
 import sys
 from pathlib import Path
-from typing import Dict, Any, Tuple, Optional
-import logging
-import json
+from typing import Any, Dict, Optional, Tuple
 
+import matplotlib.pyplot as plt
+import mlflow
+import mlflow.pytorch
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.optim.lr_scheduler import StepLR
-from tqdm import tqdm
-import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.metrics import (
-    confusion_matrix,
-    classification_report,
     accuracy_score,
+    classification_report,
+    confusion_matrix,
+    f1_score,
     precision_score,
     recall_score,
-    f1_score,
 )
-import mlflow
-import mlflow.pytorch
+from torch.optim.lr_scheduler import StepLR
+from tqdm import tqdm
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.utils.config import load_config, get_training_config, get_mlflow_config
 from src.data.dataloader import create_data_loaders, get_class_names
-from src.models.cnn import create_model, count_parameters
+from src.models.cnn import count_parameters, create_model
+from src.utils.config import get_mlflow_config, get_training_config, load_config
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")

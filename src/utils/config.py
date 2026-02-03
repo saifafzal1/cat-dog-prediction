@@ -6,9 +6,10 @@ from YAML files for the MLOps pipeline.
 """
 
 import os
-import yaml
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
+
+import yaml
 
 
 def load_config(config_path: Optional[str] = None) -> Dict[str, Any]:

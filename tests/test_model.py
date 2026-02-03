@@ -7,6 +7,7 @@ forward pass, and utility functions.
 
 import sys
 from pathlib import Path
+
 import pytest
 import torch
 import torch.nn as nn
@@ -15,7 +16,7 @@ import torch.nn as nn
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.models.cnn import SimpleCNN, create_model, count_parameters
+from src.models.cnn import SimpleCNN, count_parameters, create_model
 
 
 class TestSimpleCNN:

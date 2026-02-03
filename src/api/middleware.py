@@ -5,16 +5,17 @@ This module provides middleware components that automatically
 track requests, responses, and collect performance metrics.
 """
 
+import logging
 import time
 import uuid
 from typing import Callable
+
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
-import logging
 
-from src.monitoring.metrics import record_request
 from src.monitoring.logging_config import request_logger
+from src.monitoring.metrics import record_request
 
 logger = logging.getLogger(__name__)
 

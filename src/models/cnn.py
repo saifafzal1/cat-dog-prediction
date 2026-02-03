@@ -5,10 +5,11 @@ This module defines a baseline convolutional neural network
 architecture for image classification.
 """
 
+from typing import Any, Dict
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from typing import Dict, Any
 
 
 class SimpleCNN(nn.Module):
