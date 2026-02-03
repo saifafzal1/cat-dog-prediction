@@ -1,0 +1,55 @@
+# Configuration file for Cats vs Dogs Classification MLOps Pipeline
+# This file contains all configurable parameters for the project
+
+# Data configuration
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  image_size: 224  # Standard size for CNNs (224x224)
+  channels: 3  # RGB images
+  train_split: 0.8  # 80% for training
+  val_split: 0.1  # 10% for validation
+  test_split: 0.1  # 10% for testing
+  random_seed: 42  # For reproducibility
+
+# Data augmentation configuration
+augmentation:
+  horizontal_flip: true
+  rotation_degrees: 15
+  color_jitter:
+    brightness: 0.2
+    contrast: 0.2
+    saturation: 0.2
+    hue: 0.1
+  normalize:
+    mean: [0.485, 0.456, 0.406]  # ImageNet statistics
+    std: [0.229, 0.224, 0.225]
+
+# Model configuration
+model:
+  name: "SimpleCNN"  # Baseline model name
+  num_classes: 2  # Binary classification: Cat vs Dog
+  dropout_rate: 0.5
+
+# Training configuration
+training:
+  batch_size: 32
+  epochs: 10
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  optimizer: "adam"
+  scheduler:
+    type: "step"
+    step_size: 5
+    gamma: 0.1
+
+# MLflow configuration
+mlflow:
+  experiment_name: "cats_vs_dogs_classification"
+  tracking_uri: "mlruns"
+  artifact_location: "mlartifacts"
+
+# Model saving configuration
+output:
+  model_dir: "models"
+  model_format: "pt"  # PyTorch format

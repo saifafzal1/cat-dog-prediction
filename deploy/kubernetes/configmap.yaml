@@ -1,0 +1,23 @@
+# Kubernetes ConfigMap for application configuration
+# Contains non-sensitive configuration parameters
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cats-dogs-config
+  namespace: cats-dogs-classifier
+  labels:
+    app: cats-dogs-classifier
+data:
+  # Model configuration
+  MODEL_PATH: "/app/models/best_model.pt"
+
+  # Logging configuration
+  LOG_LEVEL: "INFO"
+
+  # Python settings
+  PYTHONUNBUFFERED: "1"
+
+  # API settings
+  API_HOST: "0.0.0.0"
+  API_PORT: "8000"

@@ -1,0 +1,71 @@
+# Docker ignore file
+# Excludes files and directories from the Docker build context
+
+# Git
+.git
+.gitignore
+
+# DVC
+.dvc
+.dvcignore
+*.dvc
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info
+.eggs
+*.egg
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Jupyter
+.ipynb_checkpoints/
+notebooks/
+
+# Data directories (large files)
+data/raw/
+data/processed/
+
+# MLflow artifacts (large files)
+mlruns/
+mlartifacts/
+
+# Documentation
+*.md
+docs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local configuration
+.env
+*.local
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+tmp/

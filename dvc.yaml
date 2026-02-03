@@ -1,0 +1,59 @@
+# DVC Pipeline Configuration
+# This file defines the ML pipeline stages for reproducibility
+
+stages:
+  # Stage 1: Download and organize raw data
+  download_data:
+    cmd: python src/data/download.py
+    deps:
+      - src/data/download.py
+      - src/utils/config.py
+      - configs/config.yaml
+    outs:
+      - data/raw/cats:
+          cache: true
+      - data/raw/dogs:
+          cache: true
+
+  # Stage 2: Preprocess data (resize, split)
+  preprocess:
+    cmd: python src/data/preprocess.py
+    deps:
+      - src/data/preprocess.py
+      - src/utils/config.py
+      - configs/config.yaml
+      - data/raw/cats
+      - data/raw/dogs
+    outs:
+      - data/processed/train:
+          cache: true
+      - data/processed/val:
+          cache: true
+      - data/processed/test:
+          cache: true
+
+  # Stage 3: Train the model
+  train:
+    cmd: python src/train.py
+    deps:
+      - src/train.py
+      - src/models/cnn.py
+      - src/data/dataloader.py
+      - src/utils/config.py
+      - configs/config.yaml
+      - data/processed/train
+      - data/processed/val
+      - data/processed/test
+    outs:
+      - models/best_model.pt:
+          cache: true
+      - models/final_model.pt:
+          cache: true
+    plots:
+      - models/training_curves.png:
+          cache: false
+      - models/confusion_matrix.png:
+          cache: false
+    metrics:
+      - models/classification_report.json:
+          cache: false

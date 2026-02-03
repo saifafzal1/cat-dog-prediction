@@ -1,0 +1,43 @@
+# Kubernetes Service for Cats vs Dogs Classification API
+# Exposes the deployment as a network service
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: cats-dogs-api-service
+  namespace: cats-dogs-classifier
+  labels:
+    app: cats-dogs-classifier
+    component: api
+spec:
+  type: ClusterIP
+  selector:
+    app: cats-dogs-classifier
+    component: api
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8000
+      protocol: TCP
+
+---
+# NodePort Service for external access (development/testing)
+apiVersion: v1
+kind: Service
+metadata:
+  name: cats-dogs-api-nodeport
+  namespace: cats-dogs-classifier
+  labels:
+    app: cats-dogs-classifier
+    component: api
+spec:
+  type: NodePort
+  selector:
+    app: cats-dogs-classifier
+    component: api
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8000
+      nodePort: 30080
+      protocol: TCP

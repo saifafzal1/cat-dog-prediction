@@ -1,0 +1,69 @@
+schema: '2.0'
+stages:
+  download_data:
+    cmd: python src/data/download.py
+    deps:
+    - path: configs/config.yaml
+      hash: md5
+      md5: d9e5a18b82ab7313541ed57a47d76f01
+      size: 1318
+    - path: src/data/download.py
+      hash: md5
+      md5: 39617316d502ffdc395e43fdeac62cdf
+      size: 5144
+    - path: src/utils/config.py
+      hash: md5
+      md5: 5ecf538c4643fa60ba203d6eea3c1be2
+      size: 2500
+    outs:
+    - path: data/raw/cats
+      hash: md5
+      md5: d751713988987e9331980363e24189ce.dir
+      size: 0
+      nfiles: 0
+    - path: data/raw/dogs
+      hash: md5
+      md5: d751713988987e9331980363e24189ce.dir
+      size: 0
+      nfiles: 0
+  preprocess:
+    cmd: python src/data/preprocess.py
+    deps:
+    - path: configs/config.yaml
+      hash: md5
+      md5: d9e5a18b82ab7313541ed57a47d76f01
+      size: 1318
+    - path: data/raw/cats
+      hash: md5
+      md5: d751713988987e9331980363e24189ce.dir
+      size: 0
+      nfiles: 0
+    - path: data/raw/dogs
+      hash: md5
+      md5: d751713988987e9331980363e24189ce.dir
+      size: 0
+      nfiles: 0
+    - path: src/data/preprocess.py
+      hash: md5
+      md5: 71c7ca9f5c73f6754219d392c2e73c59
+      size: 8243
+    - path: src/utils/config.py
+      hash: md5
+      md5: 5ecf538c4643fa60ba203d6eea3c1be2
+      size: 2500
+    outs:
+    - path: data/processed/test
+      hash: md5
+      md5: d751713988987e9331980363e24189ce.dir
+      size: 0
+      nfiles: 0
+    - path: data/processed/train
+      hash: md5
+      md5: d751713988987e9331980363e24189ce.dir
+      size: 0
+      nfiles: 0
+    - path: data/processed/val
+      hash: md5
+      md5: d751713988987e9331980363e24189ce.dir
+      size: 0
+      nfiles: 0

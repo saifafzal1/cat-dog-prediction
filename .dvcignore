@@ -1,0 +1,23 @@
+# DVC Ignore File
+# Files and directories to ignore when tracking with DVC
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Python cache
+__pycache__/
+*.pyc
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Log files
+*.log

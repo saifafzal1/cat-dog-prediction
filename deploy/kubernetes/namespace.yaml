@@ -1,0 +1,10 @@
+# Kubernetes Namespace for the Cats vs Dogs Classification application
+# Creates an isolated namespace for all application resources
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cats-dogs-classifier
+  labels:
+    app: cats-dogs-classifier
+    environment: production

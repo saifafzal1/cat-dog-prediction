@@ -1,0 +1,18 @@
+# Kubernetes PersistentVolumeClaim for model storage
+# Provides persistent storage for ML model files
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: model-pvc
+  namespace: cats-dogs-classifier
+  labels:
+    app: cats-dogs-classifier
+    component: storage
+spec:
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: standard

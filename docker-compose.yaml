@@ -1,0 +1,77 @@
+# Docker Compose configuration for Cats vs Dogs Classification Service
+# This file defines the deployment configuration for local development and testing
+
+version: '3.8'
+
+services:
+  # Main inference API service
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cats-dogs-classifier:latest
+    container_name: cats-dogs-api
+    ports:
+      - "8000:8000"
+    environment:
+      - MODEL_PATH=/app/models/best_model.pt
+      - LOG_LEVEL=INFO
+      - PYTHONUNBUFFERED=1
+    volumes:
+      # Mount models directory for easy model updates
+      - ./models:/app/models:ro
+      # Mount logs directory for persistent logging
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - mlops-network
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
+
+  # MLflow tracking server (optional - for experiment tracking)
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.9.0
+    container_name: mlflow-server
+    ports:
+      - "5000:5000"
+    environment:
+      - MLFLOW_TRACKING_URI=sqlite:///mlflow.db
+    volumes:
+      - ./mlruns:/mlflow/mlruns
+      - ./mlartifacts:/mlflow/mlartifacts
+      - mlflow-db:/mlflow
+    command: >
+      mlflow server
+      --backend-store-uri sqlite:///mlflow/mlflow.db
+      --default-artifact-root /mlflow/mlartifacts
+      --host 0.0.0.0
+      --port 5000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - mlops-network
+    profiles:
+      - full
+
+networks:
+  mlops-network:
+    driver: bridge
+    name: mlops-network
+
+volumes:
+  mlflow-db:
+    name: mlflow-db
