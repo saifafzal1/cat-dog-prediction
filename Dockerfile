@@ -32,7 +32,9 @@ COPY requirements.txt .
 
 # Install Python dependencies
 # Using --no-cache-dir to reduce image size
+# Install heavy ML libraries first for better caching
 RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu && \
     pip install --no-cache-dir -r requirements.txt
 
 # Copy application source code
