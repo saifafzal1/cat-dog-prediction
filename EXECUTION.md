@@ -2,6 +2,107 @@
 
 This guide provides step-by-step instructions to run the complete MLOps pipeline for Cats vs Dogs Classification.
 
+---
+
+## 🚀 Quick Navigation
+
+- **[First Time? Start Here](#first-time-setup)** - Complete setup from scratch (30-40 minutes)
+- **[Already Set Up? Quick Start](#quick-start-subsequent-runs)** - Restart services (2-3 minutes)
+- **[Assignment Requirements Checklist](#assignment-requirements-checklist)** - Verify M1-M5 completion
+
+---
+
+## Quick Start (Subsequent Runs)
+
+**Use this section if you've already completed the first-time setup.**
+
+### Prerequisites Check
+- ✅ Model already trained (`models/best_model.pt` exists)
+- ✅ Virtual environment created
+- ✅ Dependencies installed
+- ✅ Dataset downloaded
+
+### Option 1: Run with Docker Compose (Recommended - M4)
+
+```bash
+# Navigate to project
+cd "/Users/<username>/Documents/MLOPS/MLOPS Assignment 2"
+
+# Start all services
+docker compose up -d
+
+# Verify deployment
+curl http://localhost:8000/health
+
+# View logs
+docker compose logs -f
+
+# Test predictions
+curl -X POST -F "file=@/path/to/cat-image.jpg" http://localhost:8000/predict
+
+# View metrics (M5)
+curl http://localhost:8000/metrics | python -m json.tool
+
+# Stop services when done
+docker compose down
+```
+
+### Option 2: Run API Directly (Development)
+
+```bash
+# Navigate to project
+cd "/Users/<username>/Documents/MLOPS/MLOPS Assignment 2"
+
+# Activate environment
+source venv/bin/activate
+
+# Start API server
+uvicorn src.api.app:app --host 0.0.0.0 --port 8000 --reload
+
+# In another terminal - test the API
+curl http://localhost:8000/health
+curl -X POST -F "file=@/path/to/cat-image.jpg" http://localhost:8000/predict
+```
+
+### Option 3: View MLflow Experiments (M1)
+
+```bash
+# Navigate to project
+cd "/Users/<username>/Documents/MLOPS/MLOPS Assignment 2"
+
+# Activate environment
+source venv/bin/activate
+
+# Start MLflow UI
+mlflow ui --port 5001
+
+# Open in browser: http://localhost:5001
+```
+
+### Quick Monitoring Commands (M5)
+
+```bash
+# Activate environment if not already active
+source venv/bin/activate
+
+# View metrics
+curl http://localhost:8000/metrics | python -m json.tool
+
+# View model performance
+curl http://localhost:8000/performance | python -m json.tool
+
+# Simulate predictions for testing
+python scripts/simulate_predictions.py --url http://localhost:8000 -n 20 --add-labels
+```
+
+---
+
+## First Time Setup
+
+**Complete these steps if this is your first time running the project.**
+
+**Estimated Time**: 30-40 minutes (depending on internet speed)
+
 ## Prerequisites
 
 - Python 3.9+ installed
@@ -9,15 +110,15 @@ This guide provides step-by-step instructions to run the complete MLOps pipeline
 - Git installed
 - Kaggle account (for dataset download)
 
-## Step 1: Initial Setup
+### Step 1: Initial Setup (First Time Only)
 
-### 1.1 Clone/Navigate to Project
+#### 1.1 Clone/Navigate to Project
 
 ```bash
 cd "/Users/<username>/Documents/MLOPS/MLOPS Assignment 2"
 ```
 
-### 1.2 Create and Activate Virtual Environment
+#### 1.2 Create and Activate Virtual Environment
 
 ```bash
 # Create virtual environment (if not exists)
@@ -27,14 +128,14 @@ python3.11 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-### 1.3 Install Dependencies
+#### 1.3 Install Dependencies
 
 ```bash
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 1.4 Initialize Git and DVC
+#### 1.4 Initialize Git and DVC
 
 ```bash
 # Initialize Git (if not already done)
@@ -45,9 +146,9 @@ git branch -m main
 dvc init
 ```
 
-## Step 2: Configure Kaggle API (Dataset Download)
+### Step 2: Configure Kaggle API (First Time Only)
 
-### 2.1 Get Kaggle API Credentials
+#### 2.1 Get Kaggle API Credentials
 
 1. Go to https://www.kaggle.com
 2. Login or create an account
@@ -56,7 +157,7 @@ dvc init
 5. Click "Create New Token"
 6. Download `kaggle.json`
 
-### 2.2 Setup Kaggle Credentials
+#### 2.2 Setup Kaggle Credentials
 
 ```bash
 # Create kaggle directory
@@ -69,27 +170,29 @@ mv ~/Downloads/kaggle.json ~/.kaggle/
 chmod 600 ~/.kaggle/kaggle.json
 ```
 
-## Step 3: Run the ML Pipeline (M1)
+### Step 3: Train Model with MLflow (M1 - First Time Only)
 
-### 3.1 Download Dataset
+**Note**: Only needed once. Skip if `models/best_model.pt` exists.
+
+#### 3.1 Download Dataset
 
 ```bash
 python src/data/download.py
 ```
 
-### 3.2 Preprocess Data
+#### 3.2 Preprocess Data
 
 ```bash
 python src/data/preprocess.py
 ```
 
-### 3.3 Train Model with MLflow Tracking
+#### 3.3 Train Model with MLflow Tracking
 
 ```bash
 python src/train.py
 ```
 
-### 3.4 View Experiments in MLflow
+#### 3.4 View Experiments in MLflow
 
 ```bash
 # Start MLflow UI (in a new terminal)
@@ -104,9 +207,11 @@ Open http://localhost:5001 in your browser to view experiments.
 dvc repro
 ```
 
-## Step 4: Run the API Service (M2)
+### Step 4: Run the API Service (M2)
 
-### 4.1 Start the API Server
+**Note**: Can be run anytime after model is trained.
+
+#### 4.1 Start the API Server
 
 ```bash
 # Development mode with hot reload
@@ -116,7 +221,7 @@ uvicorn src.api.app:app --host 0.0.0.0 --port 8000 --reload
 make api-dev
 ```
 
-### 4.2 Test API Endpoints
+#### 4.2 Test API Endpoints
 
 Open a new terminal and run:
 
@@ -131,9 +236,11 @@ curl http://localhost:8000/health
 curl -X POST -F "/Users/nadiaashfaq/Desktop/cat-image.jpg" http://localhost:8000/predict
 ```
 
-## Step 5: Build and Run Docker Container (M2)
+### Step 5: Docker Containerization (M2)
 
-### 5.1 Build Docker Image
+**Note**: Build once, run anytime.
+
+#### 5.1 Build Docker Image
 
 **Option A: Pull Pre-built Image from GitHub Container Registry (Recommended - Fastest)**
 
@@ -155,7 +262,7 @@ DOCKER_BUILDKIT=1 docker build -t cats-dogs-classifier:latest .
 make docker-build
 ```
 
-### 5.2 Run Container
+#### 5.2 Run Container
 
 ```bash
 docker run -d \
@@ -168,7 +275,7 @@ docker run -d \
 make docker-run
 ```
 
-### 5.3 Verify Container
+#### 5.3 Verify Container
 
 ```bash
 # Check container is running
@@ -181,7 +288,7 @@ curl http://localhost:8000/health
 docker logs cats-dogs-api
 ```
 
-### 5.4 Stop Container
+#### 5.4 Stop Container
 
 ```bash
 docker stop cats-dogs-api
@@ -191,9 +298,11 @@ docker rm cats-dogs-api
 make docker-stop
 ```
 
-## Step 6: Run Tests (M3)
+### Step 6: Testing (M3)
 
-### 6.1 Run All Unit Tests
+**Note**: Run anytime to verify code quality.
+
+#### 6.1 Run All Unit Tests
 
 ```bash
 pytest tests/ -v
@@ -202,7 +311,7 @@ pytest tests/ -v
 make test
 ```
 
-### 6.2 Run Tests with Coverage
+#### 6.2 Run Tests with Coverage
 
 ```bash
 pytest tests/ -v --cov=src --cov-report=html
@@ -211,7 +320,7 @@ pytest tests/ -v --cov=src --cov-report=html
 make test-cov
 ```
 
-### 6.3 Run Linting
+#### 6.3 Run Linting
 
 ```bash
 # Check code formatting
@@ -227,11 +336,13 @@ flake8 src/ tests/
 make lint
 ```
 
-## Step 7: Deploy with Docker Compose (M4 - Recommended)
+### Step 7: Deploy with Docker Compose (M4 - Recommended)
+
+**Note**: Recommended deployment method. Can be run anytime.
 
 **Docker Compose deployment is sufficient for M4 requirement.** This provides production-grade deployment with service orchestration, health checks, and logging.
 
-### 7.1 Start Services
+#### 7.1 Start Services
 
 ```bash
 # Start all services in detached mode
@@ -241,7 +352,7 @@ docker compose up -d
 ./scripts/deploy.sh compose-up
 ```
 
-### 7.2 Verify Deployment
+#### 7.2 Verify Deployment
 
 ```bash
 # Check services are running
@@ -254,7 +365,7 @@ docker compose logs -f
 curl http://localhost:8000/health
 ```
 
-### 7.3 Run Smoke Tests
+#### 7.3 Run Smoke Tests
 
 ```bash
 # Run comprehensive smoke tests
@@ -264,7 +375,7 @@ curl http://localhost:8000/health
 make smoke-test
 ```
 
-### 7.4 Test Predictions
+#### 7.4 Test Predictions
 
 ```bash
 # Test prediction endpoint
@@ -277,7 +388,7 @@ curl http://localhost:8000/metrics | python -m json.tool
 curl http://localhost:8000/performance | python -m json.tool
 ```
 
-### 7.5 Stop Services
+#### 7.5 Stop Services
 
 ```bash
 # Stop and remove containers
@@ -289,27 +400,29 @@ docker compose down
 
 ---
 
-## Step 8: Monitor the Service (M5)
+### Step 8: Monitor the Service (M5)
 
-### 8.1 View Metrics
+**Note**: Run while service is active to view metrics.
+
+#### 8.1 View Metrics
 
 ```bash
 curl http://localhost:8000/metrics | python -m json.tool
 ```
 
-### 8.2 View Model Performance
+#### 8.2 View Model Performance
 
 ```bash
 curl http://localhost:8000/performance | python -m json.tool
 ```
 
-### 8.3 View Recent Predictions
+#### 8.3 View Recent Predictions
 
 ```bash
 curl "http://localhost:8000/predictions/recent?n=10" | python -m json.tool
 ```
 
-### 8.4 Simulate Predictions for Testing
+#### 8.4 Simulate Predictions for Testing
 
 ```bash
 # Simulate 20 predictions
@@ -322,18 +435,20 @@ python scripts/simulate_predictions.py --url http://localhost:8000 -n 20 --add-l
 python scripts/simulate_predictions.py --url http://localhost:8000 --metrics-only
 ```
 
-### 8.5 Add True Label to Prediction
+#### 8.5 Add True Label to Prediction
 
 ```bash
 # Add label to most recent prediction
 curl -X POST "http://localhost:8000/predictions/-1/label?true_label=cat"
 ```
 
-## Step 9: CI/CD Pipeline (M3 & M4)
+### Step 9: CI/CD Pipeline (M3 & M4)
+
+**Note**: Runs automatically on every push to GitHub.
 
 The CI/CD pipeline runs automatically on GitHub when you push code.
 
-### 9.1 Push to GitHub
+#### 9.1 Push to GitHub (First Time Setup)
 
 ```bash
 # Add remote (replace with your repository URL)
@@ -349,7 +464,7 @@ git commit -m "Complete MLOps pipeline implementation"
 git push -u origin main
 ```
 
-### 9.2 Configure GitHub Secrets
+#### 9.2 Configure GitHub Secrets (Optional)
 
 Go to your GitHub repository -> Settings -> Secrets and variables -> Actions
 
@@ -357,9 +472,11 @@ Add the following secrets:
 - `DOCKERHUB_USERNAME`: Your Docker Hub username
 - `DOCKERHUB_TOKEN`: Your Docker Hub access token
 
-### 9.3 View CI/CD Pipeline
+#### 9.3 View CI/CD Pipeline
 
 Go to your GitHub repository -> Actions tab to view pipeline runs.
+
+---
 
 ## Assignment Requirements Checklist
 
@@ -448,3 +565,31 @@ Ensure numpy version is compatible:
 ```bash
 pip install "numpy<2"
 ```
+
+---
+
+## Summary: First Time vs. Subsequent Runs
+
+| Step | First Time | Subsequent Runs | Notes |
+|------|-----------|-----------------|-------|
+| **1. Initial Setup** | ✅ Required | ❌ Skip | Only once: create venv, install dependencies |
+| **2. Kaggle API** | ✅ Required | ❌ Skip | Only once: setup credentials |
+| **3. Train Model** | ✅ Required | ❌ Skip | Only once: unless retraining needed |
+| **4. API Service** | ✅ Test it | ✅ Run anytime | Development testing |
+| **5. Docker** | ✅ Build once | ✅ Run anytime | Pull from ghcr.io or build locally |
+| **6. Tests** | ✅ Run once | ✅ Run anytime | Verify code quality |
+| **7. Docker Compose** | ✅ Deploy | ✅ Deploy | **Recommended for M4** |
+| **8. Monitoring** | ✅ Verify | ✅ Use anytime | Track metrics while service runs |
+| **9. CI/CD** | ✅ Setup | ✅ Auto-runs | Pushes trigger pipeline automatically |
+
+### Quick Decision Tree
+
+**First time using this project?**
+- Follow Steps 1-3 (Setup, Kaggle, Train Model)
+- Then go to Step 7 (Docker Compose) to deploy
+- Verify with Step 8 (Monitoring)
+
+**Already set up?**
+- Jump to [Quick Start](#quick-start-subsequent-runs) section
+- Use Docker Compose to start services
+- Skip training/setup steps
